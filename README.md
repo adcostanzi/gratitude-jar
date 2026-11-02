@@ -8,3 +8,6 @@ The goal is to create an engaging and user-friendly experience that encourages g
 # Andres Quote:
 
 "The effectual fervent prayer of a righteous man availeth much".
+
+# Daniel Quote:
+"[Men] cannot really long rest content with mediocrity once excellence is within their reach." - Thomas S. Monson
