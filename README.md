@@ -11,3 +11,6 @@ The goal is to create an engaging and user-friendly experience that encourages g
 
 # Daniel Quote:
 "[Men] cannot really long rest content with mediocrity once excellence is within their reach." - Thomas S. Monson
+
+# Lucas Quote:
+"The future is as bright as your faith." - Thomas S. Monson
