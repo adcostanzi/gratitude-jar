@@ -11,6 +11,16 @@ export default {
   theme: {
     extend: {
       colors: {
+        jar: {
+          sage: "#55765C",
+          "sage-hover": "#416249",
+          "sage-light": "#E9F1EA",
+          charcoal: "#29332D",
+          gray: "#6B756E",
+          peach: "#FBEFEA",
+          lavender: "#F3EFF8",
+          "gold-light": "#F9EBC1",
+        },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
