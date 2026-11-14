@@ -98,3 +98,41 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - Use **pnpm**, not npm, to keep dependencies consistent.
 - Do not commit `.env.local`, `node_modules`, or `.next`.
 - Supabase database configuration and Vercel deployment are managed by Lucas Mercau.
+
+## Seed a development test user (Sprint 1)
+
+This script creates **one test account in Supabase Auth**. It does not add a
+row to the custom `public.users` table or any gratitude entries. Coordinate
+with Daniel if you later need a profile row or other seed data.
+
+1. Use a **development/test Supabase project**, not your production database.
+2. In Supabase Dashboard, open **Project Settings → API Keys** and obtain a
+   server-side **secret key** (`sb_secret_...`) or legacy `service_role` key.
+   Never share this key or prefix it with `NEXT_PUBLIC_`.
+3. Add the following to the existing `.env.local` at the repository root:
+
+   ```env
+   # The two NEXT_PUBLIC_SUPABASE_* values should already be configured.
+   SUPABASE_SECRET_KEY=your_server_only_secret_key
+   SEED_USER_EMAIL=seed.user@example.com
+   SEED_USER_PASSWORD=choose_a_unique_strong_test_password
+   ```
+
+   If your project uses a legacy key, use
+   `SUPABASE_SERVICE_ROLE_KEY=...` instead of `SUPABASE_SECRET_KEY`.
+   `.env.local` is already excluded by `.gitignore`.
+4. Use Node.js 20.6+ (needed for `--env-file`), then run:
+
+   ```bash
+   pnpm install
+   pnpm seed:user
+   ```
+
+5. Check **Supabase Dashboard → Authentication → Users**. Then run the
+   application with `pnpm dev` and sign in at `/auth/login` using your
+   configured test credentials. Rerunning the seed script leaves an existing
+   user untouched; it does **not** reset their password.
+
+**Security:** The script calls `supabase.auth.admin.createUser()` using a
+server-only administrative key. Do not import it into application pages,
+client components, or API routes. Do not commit `.env.local`.
