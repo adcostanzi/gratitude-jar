@@ -25,10 +25,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import RecordText from "@/components/ui/record-input-text";
+
+
 
 export const instant = false;
 
 export default async function JarCRUDPage() {
+    
     const supabase = await createClient()
 
     const { data: authData, error: authError} = await supabase.auth.getClaims()
@@ -82,7 +86,7 @@ export default async function JarCRUDPage() {
                     </CardHeader>
                     <CardContent>
                         <form action={createGratitudeEntry}>
-                            <FieldSet className="mb-4">
+                            {/* <FieldSet className="mb-4">
                                 <FieldGroup>
                                     <Field>
                                         <FieldLabel>Title</FieldLabel>
@@ -97,7 +101,11 @@ export default async function JarCRUDPage() {
                 
                             <Button type="submit">
                                 Create an Entry
-                            </Button>
+                            </Button> */}
+                            <RecordText />
+                            {/* <Button variant="outline" onClick={voiceRecording}>
+                                Record
+                            </Button> */}
                         </form>
                     </CardContent>
                 </Card>
