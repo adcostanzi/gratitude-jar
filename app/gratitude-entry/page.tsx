@@ -60,7 +60,6 @@ export default async function JarCRUDPage() {
                 <TableHeader>
                     <TableRow>
                         <TableHead>ID</TableHead>
-                        <TableHead>Title</TableHead>
                         <TableHead>Content</TableHead>
                         <TableHead>Created</TableHead>
                     </TableRow>
@@ -69,7 +68,6 @@ export default async function JarCRUDPage() {
                     {entries?.map((entry) => (
                         <TableRow key={entry.id}>
                             <TableCell >{entry.id}</TableCell>
-                            <TableCell>{entry.title}</TableCell>
                             <TableCell>{entry.content}</TableCell>
                             <TableCell>{entry.created}</TableCell>
                         </TableRow>

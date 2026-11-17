@@ -33,7 +33,7 @@ export async function createGratitudeEntry (formData: FormData) {
     const { supabase, userId } = await getAuthenticatedClient()
 
     // Get title
-    const title = String(formData.get("title") ?? "").trim()
+    // const title = String(formData.get("title") ?? "").trim()
 
     // Get content
     const content = String(formData.get("content"))
@@ -46,7 +46,6 @@ export async function createGratitudeEntry (formData: FormData) {
     // INSERT SQL 
     const { error } = await supabase.from("gratitude_entry").insert({
         owner_id: userId,
-        title,
         content,
     })
 
@@ -65,7 +64,7 @@ export async function readGratitudeEntry() {
     // SELECT SQL
     const { data: entries, error } = await supabase
     .from("gratitude_entry")
-    .select("id, title, content, created")
+    .select("id, content, created")
     .eq("owner_id", userId)
 
     // Show errors
