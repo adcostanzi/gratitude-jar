@@ -57,23 +57,16 @@ export default function RecordText() {
             <FieldSet className="mb-4">
                 <FieldGroup>
                     <Field>
-                        <FieldLabel>Title</FieldLabel>
-                        <Input name="title" placeholder="Title"/>
-                    </Field>
-                    <Field>
-                        <FieldLabel>Content</FieldLabel>
+                        {/* <FieldLabel>Content</FieldLabel> */}
                         <Input name="content" placeholder="Put your content here" value={contentValue} onChange={(e)=>setContentValue(e.target.value)} required/>
                     </Field>
                 </FieldGroup>
             </FieldSet>
-
-            <Button type="submit">
-                Create an Entry
-            </Button>
-
-            <Button variant="outline" onClick={voiceRecording} type="button">
+             <Button variant="outline" onClick={voiceRecording} type="button">
                 Record
             </Button>
+
+
         </>
 )
 }

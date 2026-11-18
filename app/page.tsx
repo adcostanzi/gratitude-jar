@@ -7,6 +7,7 @@ import {
   Settings,
 } from "lucide-react";
 import Image from "next/image";
+import AddEntryDialog from "@/components/ui/add-entry-dialog";
 
 const navigationItems = [
   {
@@ -17,7 +18,7 @@ const navigationItems = [
   },
   {
     label: "Memories",
-    href: "/",
+    href: "/gratitude-entry", //Temporal Route
     icon: BookOpen,
     color: "bg-jar-peach",
   },
@@ -112,18 +113,8 @@ export default function Home() {
             Begin colleting the little things that matter.
           </p>
 
-          {/* <button
-            type="button"
-            className="mt-6 rounded-full bg-jar-sage px-6 py-3 font-semibold text-white hover:bg-jar-sage-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jar-sage w-full max-w-sm md:w-auto"
-          > */}
-          <Link
-            href="/gratitude-entry"
-            className="mt-6 rounded-full bg-jar-sage px-6 py-3 font-semibold text-white hover:bg-jar-sage-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jar-sage w-full max-w-sm md:w-auto"
-            >
-            Add your first Gratitude
-          </Link>
-          
-          {/* </button> */}
+          <AddEntryDialog />
+
         </div>
       </main>
       <nav
