@@ -121,6 +121,25 @@ export async function deleteGratitudeEntry(formData:FormData) {
     
 }
 
+// DELETE
+export async function deleteEntry(id:string) {
+    // Get user authenticated data
+    const { supabase, userId } = await getAuthenticatedClient()
+    
+    // DELETE SQL
+    const { error } = await supabase
+    .from("gratitude_entry")
+    .delete()
+    .eq("id", id)
+    .eq("owner_id", userId)
+
+    // Show errors
+    if (error) throw new Error (error.message)
+
+    // Reload page
+    revalidatePath("/")
+    
+}
 
 // LOGOUT
 export async function logout() {

@@ -19,13 +19,13 @@ const navigationItems = [
   },
   {
     label: "Memories",
-    href: "/gratitude-entry", //Temporal Route
+    href: "/memories", 
     icon: BookOpen,
     color: "bg-jar-peach",
   },
   {
     label: "Insights",
-    href: "/",
+    href: "/gratitude-entry", //Temporal Route
     icon: ChartNoAxesColumn,
     color: "bg-jar-lavender",
   },

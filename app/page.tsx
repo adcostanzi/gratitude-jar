@@ -20,7 +20,7 @@ export default function Home() {
           <p className="mt-3 text-jar-gray">
             Begin colleting the little things that matter.
           </p>
-          <AddEntryDialog />
+          <AddEntryDialog content="Add your first Gratitude"/>
         </div>
       </main>
     </>

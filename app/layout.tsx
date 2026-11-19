@@ -9,6 +9,8 @@ import {
   CircleUserRound,
 } from "lucide-react";
 import NavigationItems from "@/components/navigation-items";
+import { Button } from "@/components/ui/button";
+import { logout } from "@/lib/jar-entry/crud";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -60,13 +62,11 @@ export default function RootLayout({
               </Link>
               <div className="hidden items-center gap-8 md:flex">
                 <NavigationItems />
-                <Link
-                  href="/"
-                  aria-label="Account"
-                  className="flex h-12 items-center self-start text-jar-gray"
-                >
-                  <CircleUserRound size={32} aria-hidden="true" />
-                </Link>
+                  <Button onClick={logout} aria-label="Account"
+                      className="flex h-12 items-center self-start text-jar-gray bg-white">
+                      {/* Logout */}
+                      <CircleUserRound size={32} aria-hidden="true" />
+                  </Button>
               </div>
             </nav>
           </header>
