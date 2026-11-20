@@ -2,6 +2,7 @@ import Image from "next/image";
 import AddEntryDialog from "@/components/ui/add-entry-dialog";
 import { createClient } from "@/lib/supabase/server";
 import RandomMemoryJar from "@/components/random-memory-jar";
+import Link from "next/link";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -59,7 +60,13 @@ export default async function Home() {
           )}
           {!isSignedIn && (
             <p className="mt-3 text-jar-gray">
-              Sign in to start collecting your gratitude moments.
+              <Link
+                href="/auth/login"
+                className="font-semibold text-jar-sage underline hover:text-jar-sage-hover"
+              >
+                Sign in
+              </Link>{" "}
+              to start collecting your gratitude moments.
             </p>
           )}
         </div>
