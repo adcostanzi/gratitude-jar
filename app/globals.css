@@ -66,3 +66,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+.jar-lid {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 500ms ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .jar-button:hover .jar-lid,
+  .jar-button:focus-visible .jar-lid {
+    transform: translateY(-18px) rotate(-12deg);
+  }
+}

@@ -13,6 +13,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+import JarIllustration from "@/components/jar-illustration";
+
 type Memory = {
   id: string;
   content: string;
@@ -55,16 +57,10 @@ export default function RandomMemoryJar({ hasEntries }: RandomMemoryJarProps) {
         <button
           type="button"
           aria-label="Open a random gratitude memory"
-          className="w-full max-w-[400px] rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jar-sage"
+          className="jar-button w-full max-w-[400px] rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jar-sage"
         >
           <span className="relative block">
-            <Image
-              className="h-auto w-full"
-              src="/images/gratitude-jar.svg"
-              alt=""
-              width={400}
-              height={400}
-            />
+            <JarIllustration />
 
             {hasEntries === true && (
               <span
