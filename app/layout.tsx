@@ -5,12 +5,12 @@ import "./globals.css";
 
 import Link from "next/link";
 import Image from "next/image";
-import {
-  CircleUserRound,
-} from "lucide-react";
+import { LogOut, UserRound } from "lucide-react";
 import NavigationItems from "@/components/navigation-items";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/lib/jar-entry/crud";
+
+import { createClient } from "@/lib/supabase/server";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -28,11 +28,41 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-export default function RootLayout({
+function AccountControl({ isSignedIn }: { isSignedIn: boolean }) {
+  const buttonStyle =
+    "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-jar-gray bg-white p-0 text-jar-gray hover:bg-jar-sage-light [&_svg]:size-6 md:h-12 md:w-12";
+
+  if (isSignedIn) {
+    return (
+      <Button
+        onClick={logout}
+        aria-label="Sign out"
+        title="Sign out"
+        className={buttonStyle}
+      >
+        <LogOut aria-hidden="true" />
+      </Button>
+    );
+  }
+
+  return (
+    <Button asChild className={buttonStyle}>
+      <Link href="/auth/login" aria-label="Sign in" title="Sign in">
+        <UserRound aria-hidden="true" />
+      </Link>
+    </Button>
+  );
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getClaims();
+  const isSignedIn = !error && Boolean(data?.claims?.sub);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
@@ -50,23 +80,27 @@ export default function RootLayout({
               <Link
                 href="/"
                 aria-label="Gratitude Jar home"
-                className="flex items-center gap-3"
+                className="flex shrink-0 items-center gap-1"
               >
                 <Image
-                  className="h-auto w-[100px] md:w-[150px]"
-                  src="/images/logo/gratitude-jar-logo.png"
+                  src="/images/logo/gratitude-jar-icon.png"
                   alt=""
-                  width={100}
-                  height={100}
+                  width={64}
+                  height={64}
+                  className="h-14 w-14 object-contain md:h-16 md:w-16"
                 />
+
+                <span className="text-lg font-semibold text-jar-charcoal md:text-2xl">
+                  gratitude jar
+                </span>
               </Link>
-              <div className="hidden items-center gap-8 md:flex">
+              <div className="hidden w-full max-w-[650px] items-center justify-between gap-2 pl-8 md:flex">
                 <NavigationItems />
-                  <Button onClick={logout} aria-label="Account"
-                      className="flex h-12 items-center self-start text-jar-gray bg-white">
-                      {/* Logout */}
-                      <CircleUserRound size={32} aria-hidden="true" />
-                  </Button>
+
+                <AccountControl isSignedIn={isSignedIn} />
+              </div>
+              <div className="md:hidden">
+                <AccountControl isSignedIn={isSignedIn} />
               </div>
             </nav>
           </header>
