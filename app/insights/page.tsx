@@ -12,17 +12,45 @@ export default async function InsightsPage() {
   const isSignedIn = !error && Boolean(data?.claims?.sub);
 
   let totalEntries: number | null = 0;
+  let weeklyEntries: number | null = 0;
+  // let weeklyEntriesArray: Record<string, string>[];
 
   if (!isSignedIn) {
     redirect("/auth/login")
   }
 
-  const { data: entries } = await supabase
+  const last7days = new Date();
+  last7days.setDate(last7days.getDate()-7)
+
+  
+  // Total Entries
+  const { data: allEntries } = await supabase
       .from("gratitude_entry")
-      .select("*", {count: "exact"})
+      .select("*", {count:"exact"})
       .eq("owner_id", data!.claims!.sub);
   
-  if (entries != null) totalEntries = entries.length;
+  if (allEntries != null) totalEntries = allEntries.length;
+
+  // Entries this week
+    const { data: weekEntries } = await supabase
+      .from("gratitude_entry")
+      .select("*")
+      // .eq("owner_id", data!.claims!.sub)
+      .gte("created", last7days.toISOString() );
+
+        
+  if (weekEntries != null) weeklyEntries = weekEntries.length;
+
+  // Weekly activity
+  const weeklyEntriesArray = () => {
+    weekEntries?.map((entry)=>{
+    let day = (new Date(entry.created)).getDay();
+  })
+  }
+
+  
+
+  
 
   
 
@@ -37,16 +65,16 @@ export default async function InsightsPage() {
             A look at your gratitude journey and the moments that matter.
           </h2>
         </div>
-        
-        <Card>
-            <HeartIcon />
-            Total Entries: {totalEntries}
-        </Card>
-        <Card>
-            <CalendarIcon />
-            Entries this Week: 
-        </Card>
-        
+        <div className="w-full max-w-[650px] items-center gap-2 md:flex m-8">
+          <Card className="p-8">
+              <HeartIcon  />
+              Total Entries: {totalEntries}
+          </Card>
+          <Card className="p-8">
+              <CalendarIcon />
+              Entries this Week: {weeklyEntries}
+          </Card>
+        </div>
           <InsightsChart />
         
 
