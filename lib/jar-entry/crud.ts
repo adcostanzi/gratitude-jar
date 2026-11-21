@@ -4,154 +4,112 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-// Validate user authentication/session
 async function getAuthenticatedClient() {
-  // Get user session
   const supabase = await createClient();
-
-  // Get user data
   const { data, error } = await supabase.auth.getClaims();
 
-  // Throw error if no data or invalid
   if (error || !data?.claims?.sub) {
     throw new Error("Not authorized");
   }
 
-  // Return user data
-  return {
-    supabase,
-    userId: data.claims.sub,
-  };
+  return { supabase, userId: data.claims.sub };
 }
 
-//CREATE
+function revalidateEntryPages() {
+  revalidatePath("/");
+  revalidatePath("/memories");
+  revalidatePath("/gratitude-entry");
+}
+
 export async function createGratitudeEntry(formData: FormData) {
-  // Get user authenticated data
   const { supabase, userId } = await getAuthenticatedClient();
+  const content = String(formData.get("content") ?? "").trim();
+  if (!content) throw new Error("Content required");
 
-  // Get title
-  // const title = String(formData.get("title") ?? "").trim()
-
-  // Get content
-  const content = String(formData.get("content"));
-
-  // Validate content
-  if (!content) {
-    throw new Error("Content required");
-  }
-
-  // INSERT SQL
   const { error } = await supabase.from("gratitude_entry").insert({
     owner_id: userId,
     content,
   });
 
-  // Show errors
   if (error) throw new Error(error.message);
-
-  // Reload page
-  revalidatePath("/");
+  revalidateEntryPages();
 }
 
-// READ
-export async function readGratitudeEntry() {
-  // Get user authenticated data
+// No filters => all of the user's entries, newest first.
+// Date bounds are ISO timestamps; the end bound is exclusive.
+export async function readGratitudeEntry(filters?: {
+  startUtc?: string;
+  endUtc?: string;
+}) {
   const { supabase, userId } = await getAuthenticatedClient();
 
-  // SELECT SQL
-  const { data: entries, error } = await supabase
+  let query = supabase
     .from("gratitude_entry")
     .select("id, content, created")
     .eq("owner_id", userId);
 
-  // Show errors
-  if (error) {
-    throw new Error(error.message);
-  }
+  if (filters?.startUtc) query = query.gte("created", filters.startUtc);
+  if (filters?.endUtc) query = query.lt("created", filters.endUtc);
 
-  return entries;
+  const { data, error } = await query
+    .order("created", { ascending: false })
+    .order("id", { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data;
 }
 
-// READ RANDOM ENTRY
 export async function readRandomGratitudeEntry() {
   const entries = await readGratitudeEntry();
-
-  if (!entries || entries.length === 0) {
-    return null; // No entries available
-  }
-
-  const randomIndex = Math.floor(Math.random() * entries.length);
-  return entries[randomIndex];
+  if (!entries?.length) return null;
+  return entries[Math.floor(Math.random() * entries.length)];
 }
 
-// UPDATE
 export async function updateContentGratitudeEntry(formData: FormData) {
-  // Get user authenticated data
   const { supabase, userId } = await getAuthenticatedClient();
+  const id = String(formData.get("id") ?? "").trim();
+  const content = String(formData.get("content") ?? "").trim();
 
-  // Get new data
-  const id = String(formData.get("id") ?? "");
-  const content = String(formData.get("content") ?? "");
+  if (!id || !content) throw new Error("Entry and content are required.");
 
-  // UPDATE SQL
-  const { error } = await supabase
+  // Owners can update content only. RLS must ALSO enforce owner_id = auth.uid().
+  const { data, error } = await supabase
     .from("gratitude_entry")
     .update({ content })
     .eq("id", id)
-    .eq("owner_id", userId);
+    .eq("owner_id", userId)
+    .select("id")
+    .maybeSingle();
 
-  // Show errors
   if (error) throw new Error(error.message);
-
-  // Reload page
-  revalidatePath("/");
+  if (!data) throw new Error("Entry not found or edit not permitted.");
+  revalidateEntryPages();
 }
 
-// DELETE
 export async function deleteGratitudeEntry(formData: FormData) {
-  // Get user authenticated data
-  const { supabase, userId } = await getAuthenticatedClient();
-
-  // Get id
-  const id = String(formData.get("id") ?? "");
-
-  // DELETE SQL
-  const { error } = await supabase
-    .from("gratitude_entry")
-    .delete()
-    .eq("id", id)
-    .eq("owner_id", userId);
-
-  // Show errors
-  if (error) throw new Error(error.message);
-
-  // Reload page
-  revalidatePath("/");
+  const id = String(formData.get("id") ?? "").trim();
+  await deleteEntry(id);
 }
 
-// DELETE
 export async function deleteEntry(id: string) {
-  // Get user authenticated data
   const { supabase, userId } = await getAuthenticatedClient();
+  if (!id) throw new Error("Entry ID required.");
 
-  // DELETE SQL
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("gratitude_entry")
     .delete()
     .eq("id", id)
-    .eq("owner_id", userId);
+    .eq("owner_id", userId)
+    .select("id")
+    .maybeSingle();
 
-  // Show errors
   if (error) throw new Error(error.message);
-
-  // Reload page
-  revalidatePath("/");
+  if (!data) throw new Error("Entry not found or delete not permitted.");
+  revalidateEntryPages();
 }
 
-// LOGOUT
 export async function logout() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-
   redirect("/");
 }
