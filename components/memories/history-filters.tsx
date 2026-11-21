@@ -1,11 +1,70 @@
 "use client";
 
-import { useState, useTransition, type FormEvent } from "react";
+import { useRef, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type Props = { from: string; to: string };
+
+type DateFieldProps = {
+  id: string;
+  label: string;
+  value: string;
+  min?: string;
+  max?: string;
+  onChange: (value: string) => void;
+};
+
+function openNativeCalendar(input: HTMLInputElement | null) {
+  if (!input) return;
+
+  // showPicker opens the browser's calendar when the user clicks anywhere
+  // in the field, not just the small built-in calendar indicator.
+  try {
+    if (typeof input.showPicker === "function") {
+      input.showPicker();
+    } else {
+      input.focus();
+    }
+  } catch {
+    // Browsers that restrict showPicker still allow normal date input.
+    input.focus();
+  }
+}
+
+function DateField({ id, label, value, min, max, onChange }: DateFieldProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <div className="flex min-w-0 flex-1 flex-col gap-1 text-sm text-jar-gray">
+      <label htmlFor={id}>{label}</label>
+      <div className="flex h-10 items-center rounded-lg border border-[#D5DDD5] bg-white focus-within:border-jar-sage focus-within:ring-2 focus-within:ring-jar-sage/20">
+        <input
+          id={id}
+          ref={inputRef}
+          type="date"
+          value={value}
+          min={min}
+          max={max}
+          onChange={(event) => onChange(event.target.value)}
+          onClick={(event) => openNativeCalendar(event.currentTarget)}
+          className="h-full min-w-0 flex-1 cursor-pointer bg-transparent px-3 text-jar-charcoal outline-none [&::-webkit-calendar-picker-indicator]:hidden"
+        />
+        <button
+          type="button"
+          aria-label={`Choose ${label.toLowerCase()} date`}
+          title={`Choose ${label.toLowerCase()} date`}
+          onClick={() => openNativeCalendar(inputRef.current)}
+          className="flex h-full w-10 shrink-0 items-center justify-center rounded-r-lg text-jar-sage hover:bg-jar-sage-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-jar-sage"
+        >
+          <CalendarDays className="h-4 w-4" aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 
 // The browser supplies local midnight boundaries. This ensures an entry
 // written late at night appears on the user's *local* calendar date.
@@ -57,26 +116,20 @@ export default function HistoryFilters({ from: initialFrom, to: initialTo }: Pro
         Filter by date
       </div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-        <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm text-jar-gray">
-          From
-          <input
-            type="date"
-            value={from}
-            max={to || undefined}
-            onChange={(event) => setFrom(event.target.value)}
-            className="h-10 w-full rounded-lg border border-[#D5DDD5] bg-white px-3 text-jar-charcoal"
-          />
-        </label>
-        <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm text-jar-gray">
-          To
-          <input
-            type="date"
-            value={to}
-            min={from || undefined}
-            onChange={(event) => setTo(event.target.value)}
-            className="h-10 w-full rounded-lg border border-[#D5DDD5] bg-white px-3 text-jar-charcoal"
-          />
-        </label>
+        <DateField
+          id="history-from-date"
+          label="From"
+          value={from}
+          max={to || undefined}
+          onChange={setFrom}
+        />
+        <DateField
+          id="history-to-date"
+          label="To"
+          value={to}
+          min={from || undefined}
+          onChange={setTo}
+        />
         <Button type="submit" disabled={pending} className="bg-jar-sage text-white hover:bg-jar-sage-hover">
           {pending ? "Filtering..." : "Apply filters"}
         </Button>
