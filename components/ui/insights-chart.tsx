@@ -20,26 +20,20 @@ import {
 
 export const description = "A bar chart"
 
-const chartData = [
-  { month: "Monday", desktop: 305 },
-  { month: "Tuesday", desktop: 237 },
-  { month: "Wednesday", desktop: 73 },
-  { month: "Thursday", desktop: 209 },
-  { month: "Friday", desktop: 214 },
-  { month: "Saturday", desktop: 214 },
-  { month: "Sunday", desktop: 186 },
-]
-
 const chartConfig = {
   desktop: {
-    label: "Desktop",
+    label: "Count",
     color: "var(--chart-1)",
   },
 } satisfies ChartConfig
 
-export function InsightsChart() {
+interface InsightsChartProps {
+  chartData: any
+}
+
+export function InsightsChart({chartData}:InsightsChartProps) {
   return (
-    <Card>
+    <Card className="m-8">
       <CardHeader>
         <CardTitle>Weekly Activity</CardTitle>
         <CardDescription>Gratitude entries over the last 7 days.</CardDescription>
@@ -49,7 +43,7 @@ export function InsightsChart() {
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="day"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
@@ -59,7 +53,7 @@ export function InsightsChart() {
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8} />
+            <Bar dataKey="count" fill="var(--color-desktop)" radius={8} />
           </BarChart>
         </ChartContainer>
       </CardContent>

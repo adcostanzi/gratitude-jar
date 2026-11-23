@@ -6,54 +6,62 @@ import { redirect } from "next/navigation"
 import { Suspense } from "react";
 
 export default async function InsightsPage() {
+
+  // Init supabase client
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getClaims();
 
+  // Get user session
   const isSignedIn = !error && Boolean(data?.claims?.sub);
 
+  // Init on screen values
   let totalEntries: number | null = 0;
   let weeklyEntries: number | null = 0;
-  // let weeklyEntriesArray: Record<string, string>[];
 
+  const chartData = [
+    { day: "Sunday", count: 0 },
+    { day: "Monday", count: 0 },
+    { day: "Tuesday", count: 0 },
+    { day: "Wednesday", count: 0 },
+    { day: "Thursday", count: 0 },
+    { day: "Friday", count: 0 },
+    { day: "Saturday", count: 0 },
+  ]
+
+  // Reject unauthenticated users
   if (!isSignedIn) {
     redirect("/auth/login")
   }
 
+  // Set week var
   const last7days = new Date();
   last7days.setDate(last7days.getDate()-7)
 
-  
-  // Total Entries
+  // Get total Entries from database
   const { data: allEntries } = await supabase
       .from("gratitude_entry")
       .select("*", {count:"exact"})
       .eq("owner_id", data!.claims!.sub);
   
+  // Set totalEntries value
   if (allEntries != null) totalEntries = allEntries.length;
 
-  // Entries this week
-    const { data: weekEntries } = await supabase
-      .from("gratitude_entry")
-      .select("*")
-      // .eq("owner_id", data!.claims!.sub)
-      .gte("created", last7days.toISOString() );
+  // Filter week entries
+  const weekEntries = allEntries?.filter((entry)=>{
+    return new Date(entry.created) > last7days
+  })  
 
-        
-  if (weekEntries != null) weeklyEntries = weekEntries.length;
 
-  // Weekly activity
-  const weeklyEntriesArray = () => {
-    weekEntries?.map((entry)=>{
-    let day = (new Date(entry.created)).getDay();
-  })
+  if (weekEntries != null) {
+    // Set weeklyEntries value
+    weeklyEntries = weekEntries.length;
+
+    // Group entries by day
+    for (let index = 0; index < weekEntries.length; index++) {
+      chartData[(new Date(weekEntries[index].created)).getDay()].count ++
+    }
   }
-
-  
-
-  
-
-  
-
+ 
   return (
     <Suspense fallback={<div>Loading...</div>}>
     <main className="min-h-screen bg-white px-6 pb-32 pt-8 text-jar-charcoal md:py-12">
@@ -75,7 +83,7 @@ export default async function InsightsPage() {
               Entries this Week: {weeklyEntries}
           </Card>
         </div>
-          <InsightsChart />
+          <InsightsChart chartData={chartData}/>
         
 
     </main>
