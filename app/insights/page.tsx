@@ -1,6 +1,10 @@
+import * as React from "react"
+
 import { createClient } from "@/lib/supabase/server";
 import { InsightsChart } from "@/components/ui/insights-chart";
 import { Card, CardHeader } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { HeartIcon, CalendarIcon } from "lucide-react";
 import { redirect } from "next/navigation"
 import { Suspense } from "react";
@@ -64,8 +68,9 @@ export default async function InsightsPage() {
  
   return (
     <Suspense fallback={<div>Loading...</div>}>
-    <main className="min-h-screen bg-white px-6 pb-32 pt-8 text-jar-charcoal md:py-12">
-        <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
+    <main className="mx-auto p-8 w-auto max-w-7xl">
+      {/* TOP */}
+        <div className="mx-auto mb-8 flex max-w-3xl flex-col items-center text-center">
           <h1 className="max-w-xl text-3xl font-semibold leading-tight sm:text-4xl md:mt-8">
             Your Insights
           </h1>
@@ -73,19 +78,39 @@ export default async function InsightsPage() {
             A look at your gratitude journey and the moments that matter.
           </h2>
         </div>
-        <div className="w-full max-w-[650px] items-center gap-2 md:flex m-8">
+
+        {/* CARDS */}
+        <div className="grid grid-cols-2 justify-center gap-20 mb-8">
           <Card className="p-8">
-              <HeartIcon  />
+                <HeartIcon />
               Total Entries: {totalEntries}
           </Card>
           <Card className="p-8">
-              <CalendarIcon />
+              <CalendarIcon  />
               Entries this Week: {weeklyEntries}
           </Card>
         </div>
-          <InsightsChart chartData={chartData}/>
-        
 
+        {/* BODY */}
+        <div className="grid grid-cols-3 gap-10 h-full">
+        {/* Chart */}
+          <InsightsChart chartData={chartData} className="col-span-2 h-full" />
+        {/* Scroll Area */}
+          <ScrollArea className="h-15 rounded-md border p-2 max-h-96">
+            <h2 className="font-bold text-center">Today's Memories</h2>
+            <Separator className="my-2"/>
+            {weekEntries?.map((entry)=>
+            (
+            // <React.Fragment>
+              <div>
+              {entry.content}
+              <Separator className="my-2"/>
+              </div>
+              // </React.Fragment>  
+            )
+            )}
+          </ScrollArea>
+        </div>
     </main>
     </Suspense>
   )

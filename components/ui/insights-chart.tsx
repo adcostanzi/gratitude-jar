@@ -28,17 +28,18 @@ const chartConfig = {
 } satisfies ChartConfig
 
 interface InsightsChartProps {
-  chartData: any
+  chartData: any;
+  className: string;
 }
 
-export function InsightsChart({chartData}:InsightsChartProps) {
+export function InsightsChart({chartData, className}:InsightsChartProps) {
   return (
-    <Card className="m-8">
+    <Card className={className}>
       <CardHeader>
         <CardTitle>Weekly Activity</CardTitle>
         <CardDescription>Gratitude entries over the last 7 days.</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="h-full">
         <ChartContainer config={chartConfig}>
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
