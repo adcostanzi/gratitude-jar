@@ -1,5 +1,3 @@
-import * as React from "react"
-
 import { createClient } from "@/lib/supabase/server";
 import { InsightsChart } from "@/components/ui/insights-chart";
 import { Card, CardHeader } from "@/components/ui/card";
@@ -41,6 +39,10 @@ export default async function InsightsPage() {
   const last7days = new Date();
   last7days.setDate(last7days.getDate()-7)
 
+  // Set today var
+  const today = new Date();
+  today.setDate(today.getDate()-1)
+
   // Get total Entries from database
   const { data: allEntries } = await supabase
       .from("gratitude_entry")
@@ -66,6 +68,13 @@ export default async function InsightsPage() {
     }
   }
  
+  // Get today's entries
+  const todayEntries = weekEntries?.filter((entry)=> {
+    return new Date(entry.created) > today
+  }
+  )
+
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
     <main className="mx-auto p-8 w-auto max-w-7xl">
@@ -93,22 +102,20 @@ export default async function InsightsPage() {
 
         {/* BODY */}
         <div className="grid grid-cols-3 gap-10 h-full">
+
         {/* Chart */}
           <InsightsChart chartData={chartData} className="col-span-2 h-full" />
         {/* Scroll Area */}
           <ScrollArea className="h-15 rounded-md border p-2 max-h-96">
             <h2 className="font-bold text-center">Today's Memories</h2>
             <Separator className="my-2"/>
-            {weekEntries?.map((entry)=>
-            (
-            // <React.Fragment>
-              <div>
-              {entry.content}
-              <Separator className="my-2"/>
-              </div>
-              // </React.Fragment>  
-            )
-            )}
+            {todayEntries?.map((entry)=>
+              (
+                <div>
+                  {entry.content}
+                  <Separator className="my-2"/>
+                </div>
+              ))}
           </ScrollArea>
         </div>
     </main>
