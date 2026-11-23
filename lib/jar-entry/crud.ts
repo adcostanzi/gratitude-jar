@@ -51,18 +51,31 @@ export async function createGratitudeEntry(formData: FormData) {
 
   // Reload page
   revalidatePath("/");
+  revalidatePath("/memories");
 }
 
 // READ
-export async function readGratitudeEntry() {
+export async function readGratitudeEntry(filters?: {
+  startUtc?: string;
+  endUtc?: string;
+}) {
   // Get user authenticated data
   const { supabase, userId } = await getAuthenticatedClient();
 
   // SELECT SQL
-  const { data: entries, error } = await supabase
+  let query = supabase
     .from("gratitude_entry")
     .select("id, content, created")
     .eq("owner_id", userId);
+
+  // Optional date filters for History. End bound is exclusive.
+  if (filters?.startUtc) query = query.gte("created", filters.startUtc);
+  if (filters?.endUtc) query = query.lt("created", filters.endUtc);
+
+  // Newest memories first
+  const { data: entries, error } = await query
+    .order("created", { ascending: false })
+    .order("id", { ascending: false });
 
   // Show errors
   if (error) {
@@ -105,6 +118,7 @@ export async function updateContentGratitudeEntry(formData: FormData) {
 
   // Reload page
   revalidatePath("/");
+  revalidatePath("/memories");
 }
 
 // DELETE
@@ -127,6 +141,7 @@ export async function deleteGratitudeEntry(formData: FormData) {
 
   // Reload page
   revalidatePath("/");
+  revalidatePath("/memories");
 }
 
 // DELETE
@@ -146,6 +161,7 @@ export async function deleteEntry(id: string) {
 
   // Reload page
   revalidatePath("/");
+  revalidatePath("/memories");
 }
 
 // LOGOUT
