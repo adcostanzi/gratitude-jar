@@ -111,10 +111,12 @@ export default async function InsightsPage() {
             <Separator className="my-2"/>
             {todayEntries?.map((entry)=>
               (
-                <div>
+                
+                <div key={entry.id}>
                   {entry.content}
                   <Separator className="my-2"/>
                 </div>
+                
               ))}
           </ScrollArea>
         </div>
