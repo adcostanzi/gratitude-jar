@@ -25,7 +25,7 @@ const navigationItems = [
   },
   {
     label: "Insights",
-    href: "/gratitude-entry", //Temporal Route
+    href: "/insights",
     icon: ChartNoAxesColumn,
     color: "bg-jar-lavender",
   },
