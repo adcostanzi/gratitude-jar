@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-type Props = { from: string; to: string };
+type Tag = { id: string; name: string | null };
+type Props = { from: string; to: string; tag: string; tags: Tag[] };
 
 type DateFieldProps = {
   id: string;
@@ -68,11 +69,12 @@ function DateField({ id, label, value, min, max, onChange }: DateFieldProps) {
 
 // The browser supplies local midnight boundaries. This ensures an entry
 // written late at night appears on the user's *local* calendar date.
-export default function HistoryFilters({ from: initialFrom, to: initialTo }: Props) {
+export default function HistoryFilters({ from: initialFrom, to: initialTo, tag: initialTag, tags }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [from, setFrom] = useState(initialFrom);
   const [to, setTo] = useState(initialTo);
+  const [tag, setTag] = useState(initialTag);
   const [message, setMessage] = useState("");
 
   function applyFilters(event: FormEvent<HTMLFormElement>) {
@@ -83,6 +85,7 @@ export default function HistoryFilters({ from: initialFrom, to: initialTo }: Pro
     }
     setMessage("");
     const query = new URLSearchParams();
+    if (tag) query.set("tag", tag);
     if (from) {
       query.set("from", from);
       query.set("fromUtc", new Date(`${from}T00:00:00`).toISOString());
@@ -102,6 +105,7 @@ export default function HistoryFilters({ from: initialFrom, to: initialTo }: Pro
   function clearFilters() {
     setFrom("");
     setTo("");
+    setTag("");
     setMessage("");
     startTransition(() => router.push("/memories"));
   }
@@ -115,7 +119,7 @@ export default function HistoryFilters({ from: initialFrom, to: initialTo }: Pro
         <CalendarDays className="h-5 w-5 text-jar-sage" aria-hidden="true" />
         Filter by date
       </div>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <DateField
           id="history-from-date"
           label="From"
@@ -130,10 +134,26 @@ export default function HistoryFilters({ from: initialFrom, to: initialTo }: Pro
           min={from || undefined}
           onChange={setTo}
         />
+        <div className="flex min-w-0 flex-col gap-1 text-sm text-jar-gray">
+          <label htmlFor="history-tag">Tag</label>
+          <select
+            id="history-tag"
+            value={tag}
+            onChange={(event) => setTag(event.target.value)}
+            className="h-10 w-full rounded-lg border border-[#D5DDD5] bg-white px-3 text-jar-charcoal focus-visible:outline focus-visible:outline-2 focus-visible:outline-jar-sage"
+          >
+            <option value="">All tags</option>
+            {tags.map((item) => (
+              <option key={item.id} value={item.id}>{item.name ?? "Unnamed tag"}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className="mt-4 flex flex-wrap gap-3">
         <Button type="submit" disabled={pending} className="bg-jar-sage text-white hover:bg-jar-sage-hover">
           {pending ? "Filtering..." : "Apply filters"}
         </Button>
-        <Button type="button" variant="outline" onClick={clearFilters} disabled={pending || (!from && !to)}>
+        <Button type="button" variant="outline" onClick={clearFilters} disabled={pending || (!from && !to && !tag)}>
           Clear
         </Button>
       </div>
