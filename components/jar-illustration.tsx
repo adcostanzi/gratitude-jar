@@ -23,9 +23,9 @@ export default function JarIllustration() {
       <g
         id="leaves-left"
         stroke="#8cab8c"
-        stroke-width="2.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
         <path
           d="M119 244c-7-12-15-25-22-43M113 233c-11-2-20-6-26-12M112 233c0-11 2-21 7-29"
@@ -50,9 +50,9 @@ export default function JarIllustration() {
       <g
         id="leaves-right"
         stroke="#8cab8c"
-        stroke-width="2.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
         <path
           d="M301 244c7-13 14-27 22-45M307 232c10-3 19-6 25-12M308 231c-2-10-3-20-7-27"
@@ -79,10 +79,10 @@ export default function JarIllustration() {
           id="jar-glass"
           d="M171 108c-16 8-27 22-27 39v85c0 26 13 38 38 38h56c25 0 38-12 38-38v-85c0-17-11-31-27-39Z"
           fill="#ffffff"
-          fill-opacity=".28"
+          fillOpacity=".28"
           stroke="#78a27e"
-          stroke-width="3"
-          stroke-linejoin="round"
+          strokeWidth="3"
+          strokeLinejoin="round"
         />
         <path
           id="jar-bottom-tint"
@@ -94,8 +94,8 @@ export default function JarIllustration() {
           d="M160 162c-1-14 2-23 10-31"
           fill="none"
           stroke="#fff"
-          stroke-width="5"
-          stroke-linecap="round"
+          strokeWidth="5"
+          strokeLinecap="round"
           opacity=".9"
         />
         <g id="lid" className="jar-lid">
@@ -107,14 +107,14 @@ export default function JarIllustration() {
             rx="8"
             fill="#b9ceb5"
             stroke="#91b08f"
-            stroke-width="3"
+            strokeWidth="3"
           />
           <path
             d="M166 105h88"
             fill="none"
             stroke="#a3bea1"
-            stroke-width="2"
-            stroke-linecap="round"
+            strokeWidth="2"
+            strokeLinecap="round"
           />
         </g>
       </g>
@@ -122,9 +122,9 @@ export default function JarIllustration() {
         id="heart"
         fill="none"
         stroke="#8fae90"
-        stroke-width="2.8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
         <path d="M210 217c-7-7-25-19-25-29 0-7 5-12 11-12 6 0 10 3 14 8 4-5 8-8 14-8 6 0 11 5 11 12 0 10-18 22-25 29Z" />
         <path d="M210 184c-4 4-4 10 0 13 4 3 9 1 9-3 0-2-2-4-4-4" />
@@ -133,8 +133,8 @@ export default function JarIllustration() {
         id="heart-rays"
         fill="none"
         stroke="#8fae90"
-        stroke-width="3"
-        stroke-linecap="round"
+        strokeWidth="3"
+        strokeLinecap="round"
       >
         <path d="M210 162v-9M198 165l-5-7M222 165l5-7" />
       </g>

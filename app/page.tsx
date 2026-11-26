@@ -3,8 +3,9 @@ import AddEntryDialog from "@/components/ui/add-entry-dialog";
 import { createClient } from "@/lib/supabase/server";
 import RandomMemoryJar from "@/components/random-memory-jar";
 import Link from "next/link";
+import { Suspense } from "react";
 
-export default async function Home() {
+async function HomeContent() {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getClaims();
 
@@ -72,5 +73,12 @@ export default async function Home() {
         </div>
       </main>
     </>
+  );
+}
+export default function Home() {
+  return (
+    <Suspense fallback={<p>Loading your gratitude jar...</p>}>
+      <HomeContent />
+    </Suspense>
   );
 }
