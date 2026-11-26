@@ -27,23 +27,23 @@ async function getAuthenticatedClient() {
 //CREATE
 export async function createGratitudeEntry(formData: FormData) {
   // Get user authenticated data
-  const { supabase, userId } = await getAuthenticatedClient();
-
+  const { supabase } = await getAuthenticatedClient();
   // Get title
   // const title = String(formData.get("title") ?? "").trim()
 
-  // Get content
-  const content = String(formData.get("content"));
+  // Get content and selected tags
+  const content = String(formData.get("content") ?? "").trim();
+  const selectedTagIds = formData.getAll("tags").map(String);
 
   // Validate content
   if (!content) {
     throw new Error("Content required");
   }
 
-  // INSERT SQL
-  const { error } = await supabase.from("gratitude_entry").insert({
-    owner_id: userId,
-    content,
+  // Single transaction to insert entry and tags
+  const { error } = await supabase.rpc("create_gratitude_with_tags", {
+    entry_content: content,
+    selected_tag_ids: selectedTagIds,
   });
 
   // Show errors
